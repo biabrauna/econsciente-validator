@@ -58,7 +58,7 @@ app.get('/logout', (req, res) => {
 app.get('/', requireAuth, async (req, res) => {
   const errorMsg = req.query.error as string | undefined;
   try {
-    const jobs = await queue.getJobs(['waiting', 'delayed']);
+    const jobs = await queue.getJobs(['waiting', 'active', 'delayed', 'failed']);
     const submissions = jobs
       .sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
       .map((j) => j.data);
