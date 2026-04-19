@@ -15,7 +15,11 @@ const PORT = process.env.PORT || 4000;
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const API_URL = (process.env.API_URL || 'http://localhost:3002').replace(/\/$/, '');
 
-const redis = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
+const redis = new IORedis(REDIS_URL, {
+  maxRetriesPerRequest: null,
+  lazyConnect: true,
+  retryStrategy: (times) => Math.min(times * 500, 5000),
+});
 const queue = new Queue('challenge-validations', { connection: redis });
 
 app.use(express.json());
