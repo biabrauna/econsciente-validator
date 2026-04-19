@@ -12,7 +12,7 @@ declare module 'express-session' {
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const REDIS_URL = process.env.REDIS_URL || 'redis://default:zAiKkblRQNGmgJwMincVGOicGedRiqFC@roundhouse.proxy.rlwy.net:38690';
+const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const API_URL = (process.env.API_URL || 'http://localhost:3002').replace(/\/$/, '');
 
 const redis = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
