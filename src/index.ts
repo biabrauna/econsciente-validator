@@ -74,6 +74,11 @@ app.get('/', requireAuth, async (req, res) => {
 
 // ─── APPROVE ────────────────────────────────────────────────────────────────
 
+async function removeJobFromQueue(submissaoId: string) {
+  const job = await queue.getJob(`submissao-${submissaoId}`);
+  if (job) await job.remove();
+}
+
 app.post('/submissoes/:id/approve', requireAuth, async (req, res) => {
   const id = req.params.id;
   try {
@@ -82,8 +87,7 @@ app.post('/submissoes/:id/approve', requireAuth, async (req, res) => {
       { status: 'SUCCESS' },
       { headers: { Authorization: `Bearer ${req.session.token}` } },
     );
-    const job = await queue.getJob(`submissao-${id}`);
-    if (job) await job.remove();
+    await removeJobFromQueue(id).catch(() => {});
     res.redirect('/');
   } catch (err: any) {
     const msg = err?.response?.data?.message || 'Erro ao aprovar submissão';
@@ -101,8 +105,7 @@ app.post('/submissoes/:id/reject', requireAuth, async (req, res) => {
       { status: 'ERROR' },
       { headers: { Authorization: `Bearer ${req.session.token}` } },
     );
-    const job = await queue.getJob(`submissao-${id}`);
-    if (job) await job.remove();
+    await removeJobFromQueue(id).catch(() => {});
     res.redirect('/');
   } catch (err: any) {
     const msg = err?.response?.data?.message || 'Erro ao rejeitar submissão';
