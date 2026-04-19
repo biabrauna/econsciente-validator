@@ -63,7 +63,8 @@ app.get('/', requireAuth, async (req, res) => {
       .sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
       .map((j) => j.data);
     res.send(dashboardPage(submissions, errorMsg));
-  } catch {
+  } catch (err) {
+    console.error('[dashboard] Erro ao buscar jobs:', err);
     res.send(dashboardPage([], 'Não foi possível conectar ao Redis'));
   }
 });
