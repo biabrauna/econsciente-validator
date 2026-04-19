@@ -60,6 +60,7 @@ app.get('/', requireAuth, async (req, res) => {
   try {
     const jobs = await queue.getJobs(['waiting', 'active', 'delayed', 'failed']);
     const submissions = jobs
+      .filter((j) => j != null && j.data != null)
       .sort((a, b) => (a.timestamp ?? 0) - (b.timestamp ?? 0))
       .map((j) => j.data);
     res.send(dashboardPage(submissions, errorMsg));
