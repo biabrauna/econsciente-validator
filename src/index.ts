@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import { Queue } from 'bullmq';
+import IORedis from 'ioredis';
 import axios from 'axios';
 
 declare module 'express-session' {
@@ -11,12 +12,11 @@ declare module 'express-session' {
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
+const REDIS_URL = process.env.REDIS_URL || 'redis://default:zAiKkblRQNGmgJwMincVGOicGedRiqFC@roundhouse.proxy.rlwy.net:38690';
 const API_URL = (process.env.API_URL || 'http://localhost:3002').replace(/\/$/, '');
 
-const queue = new Queue('challenge-validations', {
-  connection: { url: REDIS_URL },
-});
+const redis = new IORedis(REDIS_URL, { maxRetriesPerRequest: null });
+const queue = new Queue('challenge-validations', { connection: redis });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
